@@ -1,0 +1,6 @@
+--cpu Cortex-M4.fp -g --apcs=interwork 
+-I.\RTE\_LED
+-ID:\Applications\30_keil\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+-ID:\Applications\30_keil\ARM\CMSIS\Include
+--pd "__UVISION_VERSION SETA 523" --pd "STM32F407xx SETA 1"
+--list ..\obj\startup_stm32f40_41xxx.lst --xref -o ..\obj\startup_stm32f40_41xxx.o --depend ..\obj\startup_stm32f40_41xxx.d "..\CORE\startup_stm32f40_41xxx.s"
