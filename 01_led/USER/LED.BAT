@@ -1,4 +1,7 @@
 SET PATH=D:\Applications\30_keil\ARM\ARMCC\Bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;D:\WorkSpace\softwares\vmware\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;D:\Applications\19_git\Git\cmd;D:\WorkSpace\softwares\mingw\x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin;C:\Program Files\Bandizip\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\Manfred\AppData\Local\Microsoft\WindowsApps;D:\WorkSpace\softwares\vscode\Microsoft VS Code\bin;D:\WorkSpace\softwares\mingw\x86_64-8.1.0-release-win32-seh-rt_v6-rev0\mingw64\bin;
+SET ARMCC5_ASMOPT=--diag_suppress=9931
+SET ARMCC5_CCOPT=--diag_suppress=9931
+SET ARMCC5_LINKOPT=--diag_suppress=9931
 SET CPU_TYPE=STM32F407VE
 SET CPU_VENDOR=STMicroelectronics
 SET UV2_TARGET=LED
