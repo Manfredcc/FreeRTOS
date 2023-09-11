@@ -11,8 +11,8 @@ TaskHandle_t StartTask_Handler;
 int main(void)
 { 
 
-	delay_init(168);		  //³õÊ¼»¯ÑÓÊ±º¯Êý
-	LED_Init();		        //³õÊ¼»¯LED¶Ë¿Ú
+	delay_init(168);		  //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+	LED_Init();		        //ï¿½ï¿½Ê¼ï¿½ï¿½LEDï¿½Ë¿ï¿½
 	
 	xTaskCreate(start_task, "start_task", 128, NULL, 4, &StartTask_Handler);
 	vTaskStartScheduler(); /* OS get involved */
