@@ -1,5 +1,5 @@
 Dependencies for Project 'USART', Target 'USART': (DO NOT MODIFY !)
-F (.\main.c)(0x64FF2FC5)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I ..\CORE -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I ..\USER -I ..\HARDWARE\LED -I ..\HARDWARE\BEEP -I ..\HARDWARE\KEY -I ..\FWLIB\inc -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\MemMang -I ..\FreeRTOS\portable\RVDS\ARM_CM4F-I.\RTE\_USART-ID:\Applications\30_keil\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Applications\30_keil\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER --C99-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
+F (.\main.c)(0x64FF443D)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I ..\CORE -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I ..\USER -I ..\HARDWARE\LED -I ..\HARDWARE\BEEP -I ..\HARDWARE\KEY -I ..\FWLIB\inc -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\MemMang -I ..\FreeRTOS\portable\RVDS\ARM_CM4F-I.\RTE\_USART-ID:\Applications\30_keil\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Applications\30_keil\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER --C99-o ..\obj\main.o --omf_browse ..\obj\main.crf --depend ..\obj\main.d)
 I (..\SYSTEM\sys\sys.h)(0x64FF30F6)
 I (..\USER\stm32f4xx.h)(0x542BA483)
 I (..\CORE\core_cm4.h)(0x53C7D530)
@@ -41,6 +41,16 @@ I (D:\Applications\30_keil\ARM\ARMCC\include\stdio.h)(0x57F606B8)
 I (..\HARDWARE\LED\led.h)(0x55E3D140)
 I (..\HARDWARE\BEEP\beep.h)(0x55E3C314)
 I (..\HARDWARE\KEY\key.h)(0x55E3C0BE)
+I (..\FreeRTOS\include\FreeRTOS.h)(0x64FF08F4)
+I (D:\Applications\30_keil\ARM\ARMCC\include\stddef.h)(0x57F606B8)
+I (..\FreeRTOS\include\FreeRTOSConfig.h)(0x64FF1204)
+I (..\FreeRTOS\include\projdefs.h)(0x64020E50)
+I (..\FreeRTOS\include\portable.h)(0x64020E50)
+I (..\FreeRTOS\include\deprecated_definitions.h)(0x64020E50)
+I (..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h)(0x64020E50)
+I (..\FreeRTOS\include\mpu_wrappers.h)(0x64020E50)
+I (..\FreeRTOS\include\task.h)(0x64020E50)
+I (..\FreeRTOS\include\list.h)(0x64020E50)
 F (.\stm32f4xx_it.c)(0x64FF11C2)(-c --cpu Cortex-M4.fp -g -O0 --apcs=interwork -I ..\CORE -I ..\SYSTEM\delay -I ..\SYSTEM\sys -I ..\SYSTEM\usart -I ..\FWLIB\STM32F4xx_StdPeriph_Driver\inc -I ..\USER -I ..\HARDWARE\LED -I ..\HARDWARE\BEEP -I ..\HARDWARE\KEY -I ..\FWLIB\inc -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\MemMang -I ..\FreeRTOS\portable\RVDS\ARM_CM4F-I.\RTE\_USART-ID:\Applications\30_keil\ARM\PACK\Keil\STM32F4xx_DFP\2.13.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include-ID:\Applications\30_keil\ARM\CMSIS\Include-D__UVISION_VERSION="523" -DSTM32F407xx -DSTM32F40_41xxx -DUSE_STDPERIPH_DRIVER --C99-o ..\obj\stm32f4xx_it.o --omf_browse ..\obj\stm32f4xx_it.crf --depend ..\obj\stm32f4xx_it.d)
 I (stm32f4xx_it.h)(0x5426CDC1)
 I (stm32f4xx.h)(0x542BA483)

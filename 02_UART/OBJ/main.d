@@ -41,3 +41,13 @@
 ..\obj\main.o: ..\HARDWARE\LED\led.h
 ..\obj\main.o: ..\HARDWARE\BEEP\beep.h
 ..\obj\main.o: ..\HARDWARE\KEY\key.h
+..\obj\main.o: ..\FreeRTOS\include\FreeRTOS.h
+..\obj\main.o: D:\Applications\30_keil\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\main.o: ..\FreeRTOS\include\FreeRTOSConfig.h
+..\obj\main.o: ..\FreeRTOS\include\projdefs.h
+..\obj\main.o: ..\FreeRTOS\include\portable.h
+..\obj\main.o: ..\FreeRTOS\include\deprecated_definitions.h
+..\obj\main.o: ..\FreeRTOS\portable\RVDS\ARM_CM4F\portmacro.h
+..\obj\main.o: ..\FreeRTOS\include\mpu_wrappers.h
+..\obj\main.o: ..\FreeRTOS\include\task.h
+..\obj\main.o: ..\FreeRTOS\include\list.h

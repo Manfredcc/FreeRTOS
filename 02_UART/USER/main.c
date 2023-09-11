@@ -4,49 +4,96 @@
 #include "led.h"
 #include "beep.h"
 #include "key.h"
+#include "FreeRTOS.h"
+#include "task.h"
 
+TaskHandle_t task_init_handler;
+TaskHandle_t task_0_handler;
+TaskHandle_t task_1_handler;
 
+static struct str_info {
+	char *name;
+	int index;
+	int val;
+};
 
-//串口通信实验 -库函数版本
-//STM32F4工程模板-库函数版本
-//淘宝店铺：http://mcudev.taobao.com	
+typedef struct _egoist {
+	char *name;
+	struct str_info *p_info;
+}egoist, *pegoist;
+static pegoist chip = NULL;
 
+/* Debug */
+void vPrintString(const char *String)
+{
+	taskENTER_CRITICAL();
+	
+	printf("%s", String);
 
-int main(void)
-{ 
- 
+	taskEXIT_CRITICAL();
+}
+
+static u16 times = 0;
+void task_0(void *param)
+{
 	u8 t;
 	u8 len;	
-	u16 times=0;  
-	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);//设置系统中断优先级分组2
-	delay_init(168);		//延时初始化 
-	uart_init(115200);	//串口初始化波特率为115200
-	LED_Init();		  		//初始化与LED连接的硬件接口  
+	// u16 times=0;  
+
 	while(1)
 	{
-		if(USART_RX_STA&0x8000)
+		if(USART_RX_STA&0x8000) /* Get data from user */
 		{					   
-			len=USART_RX_STA&0x3fff;//得到此次接收到的数据长度
-			printf("\r\n您发送的消息为:\r\n");
+			len=USART_RX_STA&0x3fff;
+			printf("\r\nWhat u input is:\r\n");
 			for(t=0;t<len;t++)
 			{
-				USART_SendData(USART1, USART_RX_BUF[t]);         //向串口1发送数据
-				while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);//等待发送结束
+				USART_SendData(USART1, USART_RX_BUF[t]);
+				while(USART_GetFlagStatus(USART1,USART_FLAG_TC)!=SET);
 			}
-			printf("\r\n\r\n");//插入换行
+			printf("\r\n\r\n");
 			USART_RX_STA=0;
 		}else
 		{
 			times++;
-			if(times%5000==0)
-			{
-				printf("\r\n Mcudev.嵌入式开发网STM32F407开发板 串口实验\r\n");
-				printf("嵌入式开发网\r\n\r\n\r\n");
-			}
-			if(times%200==0)printf("请输入数据,以回车键结束\r\n");  
-			if(times%30==0)LED0=!LED0;//闪烁LED,提示系统正在运行.
+			if(times%10==0) //0.1s once
+				printf("Waiting data t[%d]\r\n", times);  
 			delay_ms(10);   
 		}
 	}
+}
+
+void task_1(void *param)
+{
+	do {
+		GPIO_ResetBits(GPIOA,GPIO_Pin_7);
+		delay_ms(800);
+		GPIO_SetBits(GPIOA,GPIO_Pin_7);
+		delay_ms(800);
+
+		if (times % 30 == 0)
+			printf("Time flies %d\r\n", times);
+	} while (1);
+}
+
+void task_init(void *param)
+{
+	taskENTER_CRITICAL();
+
+	xTaskCreate(task_0, "task_0", 50, NULL, 2, &task_0_handler);
+	xTaskCreate(task_1, "task_1", 50, NULL, 2, &task_1_handler);
+	vTaskDelete(task_init_handler);
+
+	taskEXIT_CRITICAL();
+}
+
+int main(void)
+{ 
+	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
+	delay_init(168);
+	uart_init(115200);
+	LED_Init();
+	xTaskCreate(task_init, "task_init", 128, NULL, 2, &task_init_handler);
+	vTaskStartScheduler();
 }
 
