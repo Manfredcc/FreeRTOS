@@ -34,29 +34,29 @@ Ref:
 
 - [x] A pre-configured demo application that should build with no errors or warnings
 
-  ![image-20230911191311255](.\Transplant-STM32F4.assets\image-20230911191311255.png)
+  ![image-20230911191311255](./Transplant-STM32F4.assets/image-20230911191311255.png)
 
 - [x] The source code of FreeRTOS
 
-![image-20230911191348086](.\Transplant-STM32F4.assets\image-20230911191348086.png)
+![image-20230911191348086](./Transplant-STM32F4.assets/image-20230911191348086.png)
 
 ## Migrate files
 
 **1.Create a folder named `FreeRTOS` in the demo project directory**
 
-![image-20230911192146150](.\Transplant-STM32F4.assets\image-20230911192146150.png)
+![image-20230911192146150](./Transplant-STM32F4.assets/image-20230911192146150.png)
 
 **2.Copy all the files in `FreeRTOSv2022.12.01/FreeRTOS/Source`  to current directory `FreeRTOS`**
 
-![image-20230911192600044](.\Transplant-STM32F4.assets\image-20230911192600044.png)
+![image-20230911192600044](./Transplant-STM32F4.assets/image-20230911192600044.png)
 
 **3.Copy configurations related to STM32F4 which is located at `FreeRTOSv202212.01\FreeRTOS\Demo\CORTEX_M4F_STM32F407ZG-SK` to current `include` directory**
 
-![image-20230911194416273](.\Transplant-STM32F4.assets\image-20230911194416273.png)
+![image-20230911194416273](./Transplant-STM32F4.assets/image-20230911194416273.png)
 
 **4.Remove the files in folder `FreeRTOS/protable`, and keep only `Keil`/`MemMang`/`RVDS`**
 
-![image-20230911194832511](.\Transplant-STM32F4.assets\image-20230911194832511.png)
+![image-20230911194832511](./Transplant-STM32F4.assets/image-20230911194832511.png)
 
 
 
@@ -64,23 +64,23 @@ Ref:
 
 **1.Create a new group named FreeRTOS_core, add the required source files.**
 
-![image-20230911200047825](.\Transplant-STM32F4.assets\image-20230911200047825.png)
+![image-20230911200047825](./Transplant-STM32F4.assets/image-20230911200047825.png)
 
 The following figure shows more details
 
-![image-20230911200412918](.\Transplant-STM32F4.assets\image-20230911200412918.png)
+![image-20230911200412918](./Transplant-STM32F4.assets/image-20230911200412918.png)
 
 **2.Create a new group named FreeRTOS_portable, which contains the memory management method and compiling rule**
 
-![image-20230911200846898](.\Transplant-STM32F4.assets\image-20230911200846898.png)
+![image-20230911200846898](./Transplant-STM32F4.assets/image-20230911200846898.png)
 
 **3.Add the include files, three paths**
 
-![image-20230911201827948](.\Transplant-STM32F4.assets\image-20230911201827948.png)
+![image-20230911201827948](./Transplant-STM32F4.assets/image-20230911201827948.png)
 
 **4.Rebuild project**
 
-![image-20230911202212923](.\Transplant-STM32F4.assets\image-20230911202212923.png)
+![image-20230911202212923](./Transplant-STM32F4.assets/image-20230911202212923.png)
 
 **As the figure shows, a error occurs.** 
 
@@ -93,7 +93,7 @@ Open file `FreeRTOSConfig.h`, make the following modifications
 
 **Then rebuild project again, multiply defined occurs.**
 
-![image-20230911205116810](.\Transplant-STM32F4.assets\image-20230911205116810.png)
+![image-20230911205116810](./Transplant-STM32F4.assets/image-20230911205116810.png)
 
 Open the file `stm32f4xx_it.c`, comment out the functions that are defined repeatedly. Open file `FreeRTOSConfig.h` meanwhile, disable the hook function following:
 
@@ -247,7 +247,7 @@ Comment out the repeating `SysTick_Handler()` in file `FreeRTOSConfig.h`
 
 The output produced when 02_USART is executed as following figure:
 
-![image-20230912223443030](D:\Independ_project\FreeRTOS_STM32F4VE\Transplant-STM32F4.assets\image-20230912223443030.png)
+![image-20230912223443030](./Transplant-STM32F4.assets/image-20230912223443030.png)
 
 As the picture shows, time period between `-0-` and `-1-` is about 80. Some related source code as follows:
 
