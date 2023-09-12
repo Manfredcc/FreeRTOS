@@ -1,141 +1,128 @@
 #include "delay.h"
 #include "sys.h"
-////////////////////////////////////////////////////////////////////////////////// 	 
-//如果使用ucos,则包括下面的头文件即可.
-#if SYSTEM_SUPPORT_UCOS
-#include "FreeRTOS.h"					//ucos 使用	  
-#include "task.h"
-#endif
-//////////////////////////////////////////////////////////////////////////////////  
-//STM32F4工程模板-库函数版本
-//淘宝店铺：http://mcudev.taobao.com	
-//********************************************************************************
-//修改说明
-//无
-////////////////////////////////////////////////////////////////////////////////// 
-static u8  fac_us=0;//us延时倍乘数			   
-static u16 fac_ms=0;//ms延时倍乘数,在ucos下,代表每个节拍的ms数
 
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-//systick中断服务函数,使用ucos时用到
+#if SYSTEM_SUPPORT_UCOS
+#include "FreeRTOS.h"
+#include "task.h"
+#define OS_CRITICAL_METHOD
+#endif
+
+static u8  fac_us=0;
+static u16 fac_ms=0;
+
+#ifdef OS_CRITICAL_METHOD
+
 extern void xPortSysTickHandler(void); 
 void SysTick_Handler(void)
 {				   
-	if(xTaskGetSchedulerState()!=taskSCHEDULER_NOT_STARTED)//??????
+	if(xTaskGetSchedulerState()!=taskSCHEDULER_NOT_STARTED) /* System had been run */
     {
         xPortSysTickHandler();  
     }
 }
+
 #endif
 			   
-//初始化延迟函数
-//当使用ucos的时候,此函数会初始化ucos的时钟节拍
-//SYSTICK的时钟固定为HCLK时钟的1/8
-//SYSCLK:系统时钟
 void delay_init(u8 SYSCLK)
 {
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
+#ifdef OS_CRITICAL_METHOD
 	u32 reload;
 #endif
  	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
-	fac_us=SYSCLK/8;		//不论是否使用ucos,fac_us都需要使用
+	fac_us=SYSCLK/8;
 	    
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-	reload=SYSCLK/8;		//每秒钟的计数次数 单位为K	   
-	reload*=1000000/OS_TICKS_PER_SEC;//根据OS_TICKS_PER_SEC设定溢出时间
-							//reload为24位寄存器,最大值:16777216,在168M下,约合0.7989s左右	
-	fac_ms=1000/OS_TICKS_PER_SEC;//代表ucos可以延时的最少单位	   
-	SysTick->CTRL|=SysTick_CTRL_TICKINT_Msk;   	//开启SYSTICK中断
-	SysTick->LOAD=reload; 	//每1/OS_TICKS_PER_SEC秒中断一次	
-	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk;   	//开启SYSTICK
+#ifdef OS_CRITICAL_METHOD
+	reload=SYSCLK/8;
+	reload*=1000000/configTICK_RATE_HZ; /* time slice = 1,000,000ms / configTICK_RATE_HZ  */
+
+	fac_ms=1000/configTICK_RATE_HZ;  
+	SysTick->CTRL|=SysTick_CTRL_TICKINT_Msk;
+	SysTick->LOAD=reload;
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk;
 #else
-	fac_ms=(u16)fac_us*1000;//非ucos下,代表每个ms需要的systick时钟数   
+	fac_ms=(u16)fac_us*1000;
 #endif
 }								    
 
-#ifdef OS_CRITICAL_METHOD 	//如果OS_CRITICAL_METHOD定义了,说明使用ucosII了.
-//延时nus
-//nus:要延时的us数.		    								   
+#ifdef OS_CRITICAL_METHOD
+	    								   
 void delay_us(u32 nus)
 {		
 	u32 ticks;
 	u32 told,tnow,tcnt=0;
-	u32 reload=SysTick->LOAD;	//LOAD的值	    	 
-	ticks=nus*fac_us; 			//需要的节拍数	  		 
+	u32 reload=SysTick->LOAD;  	 
+	ticks=nus*fac_us;		 
 	tcnt=0;
-//	OSSchedLock();				//阻止ucos调度，防止打断us延时
-	told=SysTick->VAL;        	//刚进入时的计数器值
+//	OSSchedLock();
+	told=SysTick->VAL;
 	while(1)
 	{
 		tnow=SysTick->VAL;	
 		if(tnow!=told)
 		{	    
-			if(tnow<told)tcnt+=told-tnow;//这里注意一下SYSTICK是一个递减的计数器就可以了.
+			if(tnow<told)tcnt+=told-tnow;
 			else tcnt+=reload-tnow+told;	    
 			told=tnow;
-			if(tcnt>=ticks)break;//时间超过/等于要延迟的时间,则退出.
+			if(tcnt>=ticks)break;
 		}  
 	};
-//	OSSchedUnlock();			//开启ucos调度 									    
+//	OSSchedUnlock();							    
 }
-//延时nms
-//nms:要延时的ms数
+
 void delay_ms(u16 nms)
 {	
-		if(OSRunning==OS_TRUE&&OSLockNesting==0)//如果os已经在跑了	   
+		if(xTaskGetSchedulerState()!=taskSCHEDULER_NOT_STARTED)
 	{		  
-		if(nms>=fac_ms)//延时的时间大于ucos的最少时间周期 
+		if(nms>=fac_ms)
 		{
-   			vTaskDelay(nms/fac_ms);	//ucos延时
+   			vTaskDelay(nms/fac_ms);
 		}
-		nms%=fac_ms;				//ucos已经无法提供这么小的延时了,采用普通方式延时    
+		nms%=fac_ms; 
 	}
-	delay_us((u32)(nms*1000));		//普通方式延时 
+	delay_us((u32)(nms*1000));
 }
-#else  //不用ucos时
-//延时nus
-//nus为要延时的us数.	
-//注意:nus的值,不要大于798915us
+#else
+
 void delay_us(u32 nus)
 {		
 	u32 temp;	    	 
-	SysTick->LOAD=nus*fac_us; //时间加载	  		 
-	SysTick->VAL=0x00;        //清空计数器
-	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;          //开始倒数 
+	SysTick->LOAD=nus*fac_us; //??????	  		 
+	SysTick->VAL=0x00;        //????????
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;          //??????? 
 	do
 	{
 		temp=SysTick->CTRL;
 	}
-	while((temp&0x01)&&!(temp&(1<<16)));//等待时间到达   
-	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;       //关闭计数器
-	SysTick->VAL =0X00;       //清空计数器	 
+	while((temp&0x01)&&!(temp&(1<<16)));//????????   
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;       //????????
+	SysTick->VAL =0X00;       //????????	 
 }
-//延时nms
-//注意nms的范围
-//SysTick->LOAD为24位寄存器,所以,最大延时为:
+//???nms
+//???nms???Χ
+//SysTick->LOAD?24λ?????,????,???????:
 //nms<=0xffffff*8*1000/SYSCLK
-//SYSCLK单位为Hz,nms单位为ms
-//对168M条件下,nms<=798ms 
+//SYSCLK??λ?Hz,nms??λ?ms
+//??168M??????,nms<=798ms 
 void delay_xms(u16 nms)
 {	 		  	  
 	u32 temp;		   
-	SysTick->LOAD=(u32)nms*fac_ms;//时间加载(SysTick->LOAD为24bit)
-	SysTick->VAL =0x00;           //清空计数器
-	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;          //开始倒数  
+	SysTick->LOAD=(u32)nms*fac_ms;//??????(SysTick->LOAD?24bit)
+	SysTick->VAL =0x00;           //????????
+	SysTick->CTRL|=SysTick_CTRL_ENABLE_Msk ;          //???????  
 	do
 	{
 		temp=SysTick->CTRL;
 	}
-	while((temp&0x01)&&!(temp&(1<<16)));//等待时间到达   
-	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;       //关闭计数器
-	SysTick->VAL =0X00;       //清空计数器	  	    
+	while((temp&0x01)&&!(temp&(1<<16)));//????????   
+	SysTick->CTRL&=~SysTick_CTRL_ENABLE_Msk;       //????????
+	SysTick->VAL =0X00;       //????????	  	    
 } 
-//延时nms 
+//???nms 
 //nms:0~65535
 void delay_ms(u16 nms)
 {	 	 
-	u8 repeat=nms/540;	//这里用540,是考虑到某些客户可能超频使用,
-						//比如超频到248M的时候,delay_xms最大只能延时541ms左右了
+	u8 repeat=nms/540;	//??????540,???????Щ????????????,
+						//???糬???248M?????,delay_xms?????????541ms??????
 	u16 remain=nms%540;
 	while(repeat)
 	{
@@ -146,39 +133,3 @@ void delay_ms(u16 nms)
 	
 } 
 #endif
-			 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
