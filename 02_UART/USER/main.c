@@ -4,17 +4,21 @@
 #include "led.h"
 #include "beep.h"
 #include "key.h"
+#include "debug.h"
 #include "FreeRTOS.h"
 #include "task.h"
 
 /*===========================================================================
 							A USART DEMO
+
+GENERAL DESCRIPTION
 	A project rebuilds without any error or warn, which is out of the box for
 experiment on FreeRTOS mechanism.
 
-	Date		Author			Description
-	--------	---------    	---------------
+	When		Who			    What, Where, Why
+	--------	---    			--------------------------
 	11/09/23	Manfred			First release[Support block_delay and usart]
+	14/09/23	Manfred			Add stage-debug[debug.c, ref to linux]
 
 =============================================================================*/
 
@@ -36,18 +40,18 @@ void task_0(void *param)
 	for ( ;; ) {
 		if (USART_RX_STA & 0x8000) { /* Data have came from the serial port */
 			len = USART_RX_STA & 0x3fff;
-			printf("\r\nInput:\r\n");
+			pr_info("\r\nInput:\r\n");
 
 			for (i = 0; i < len; i++) {
 				USART_SendData(USART1, USART_RX_BUF[i]);
 				while(USART_GetFlagStatus(USART1, USART_FLAG_TC)!=SET);
 			}
-			printf("\r\n\r\n");
+			pr_err("\r\n\r\n");
 			USART_RX_STA=0;
 		} else { /* nothing from the serial port */
 			times++;
 			if (0 == times % 10) {
-				printf("Waiting data from user [t:%d]\r\n", times); 
+				pr_info("Waiting data from user [t:%d]\r\n", times); 
 			}
 			delay_ms(10);
 		}
@@ -60,15 +64,11 @@ void task_1(void *param)
 {
 	for ( ;; ) {
 		GPIO_ResetBits(GPIOA,GPIO_Pin_7);
-		printf("-0- %d\r\n", times);
+		pr_info("-0- %d\r\n", times);
 		delay_ms(800);
 		GPIO_SetBits(GPIOA,GPIO_Pin_7);
-		printf("-1- %d\r\n", times);
+		pr_info("-1- %d\r\n", times);
 		delay_ms(800);
-
-		if (0 == times % 30) {
-			printf("Time flies %d\r\n", times);
-		}
 	}
 
 	// vTaskDelete(NULL);
