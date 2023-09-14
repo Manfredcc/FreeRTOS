@@ -1,4 +1,4 @@
-# FreeRTOS On STM32F407C8T6
+# FreeRTOS On STM32F407VET6
 
 | Date     | Author  | Description   |
 | -------- | ------- | ------------- |
