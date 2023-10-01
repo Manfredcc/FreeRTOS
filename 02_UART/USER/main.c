@@ -19,6 +19,7 @@ experiment on FreeRTOS mechanism.
 	--------	---    			--------------------------
 	11/09/23	Manfred			First release[Support block_delay and usart]
 	14/09/23	Manfred			Add stage-debug[debug.c, ref to linux]
+	01/10/23	Manfred			Add xms/xus in delay function
 
 =============================================================================*/
 

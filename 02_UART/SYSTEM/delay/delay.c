@@ -81,6 +81,7 @@ void delay_ms(u16 nms)
 	}
 	delay_us((u32)(nms*1000));
 }
+
 #else
 
 void delay_us(u32 nus)
